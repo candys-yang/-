@@ -5,7 +5,7 @@
     该文件是解析dms导出的数据文件并结构化数据
     配置项遵循 python 语法标准。
 
-    日期：2018-12-14   作者：杨主任
+    日期：2019-1-30   作者：杨主任
     Email： 522703331@qq.com 
     GIT：https://github.com/candys-yang/
     blog：http://varmain.com
@@ -75,7 +75,7 @@ except :
 def readfile(filename):
     f = open(filename)
     title_cursor = 0    #for 计数器
-    datatype = ""
+    datatype = ""		#当前行的页头类型
     dataread = False
     log.log_append("---------- BMW.py: readfile() "+ filename +"  ------------")
     CurrerLineStrSumLABOR = []  #日志用
@@ -97,15 +97,35 @@ def readfile(filename):
             headr = []
             headr.append(  line[bmw_base_dealerid[0]:bmw_base_dealerid[1]]  )
             headr.append(  line[bmw_base_invocieid[0]:bmw_base_invocieid[1]]  )
-            headr.append(  line[bmw_base_chassisno[0]:bmw_base_chassisno[1]]  )
-            #如果出现空车牌，数据会溢出，因此，这里采用数据算法处理数据
+			#处理车架码
+            chassisno_str = ""
+            chassisno_whilei = 0
+            chassisno_whileicurrindex = 0
+            while chassisno_whilei <= 3:
+                chassisno_whilei = chassisno_whilei + 1
+                chassisno_whileicurrindex = line.find("|",chassisno_whileicurrindex + 1)
+            chassisno_end_index = line[chassisno_whileicurrindex + 2:].find("|")
+            chassisno_str = line[chassisno_whileicurrindex + 1:chassisno_end_index + chassisno_whileicurrindex +2 ]
+            if chassisno_str.strip() == "":
+                chassisno_str = "无"
+            headr.append(chassisno_str)
+            #处理异常车牌问题！
             regnotxt = line[bmw_base_regno[0]:bmw_base_regno[1]]
+            if regnotxt.find("N/") >= 0:
+                regnotxt = "无"
+            if regnotxt.strip() == "":
+                regnotxt = "无"
             headr.append( regnotxt.strip() )
-            if regnotxt.find("/A") >= 1:
-                headr.append(  line[bmw_base_orderdate[0]+1:bmw_base_orderdate[1] + 1]  )
-            else:
-                headr.append(  line[bmw_base_orderdate[0]:bmw_base_orderdate[1]]  )
-            
+			#处理订单日期
+            whilei = 0
+            whileicurrindex = 0
+            while whilei <= 5:
+                whilei = whilei + 1
+                whileicurrindex = line.find("|",whileicurrindex + 1)
+            orderdate_end_index = line[whileicurrindex + 2:].find("|")
+            headr.append(line[whileicurrindex + 1:whileicurrindex + orderdate_end_index + 2])    
+
+
             mileage = line[bmw_base_mileage[0]:bmw_base_mileage[1]].strip()
             if mileage.find("|") >= 1:
                 mileage = mileage[:-1]
@@ -169,28 +189,21 @@ def readfile(filename):
 
     clsl = ','.join(CurrerLineStrSumLABOR)
     log.log_append("CurrerLineStrSumLABOR: " + clsl)
-    log.log_append("----------END:readfile() ------------")
     pass
 
 #整理数据，传送到数据库
 def SqlWrite(datatype,listdate):
-    log.log_sql_append( "log.sql#] sqlwrite:" )
-    log.log_sql_append( datatype )
-    log.log_sql_append( ','.join(listdate))
-
+    log.log_sql_append( "log.sql#] sqlwrite:" + str(datatype) + str( ','.join(listdate)) )
     sqlconn = sql.connect('datebase.db')
-
     if datatype == "HEADR":
         SqlWrite_HEADR(listdate)
     elif datatype == "LABOR":
         SqlWrite_LABOR(listdate)
     elif datatype == "Parts":
         SqlWrite_Parts(listdate)
-
     pass
 def SqlWrite_HEADR(listdate):
-    #log_sql#]44144,411166,LBVHZ1100JML37210,粤QND397,2018/11/13,19134,18/11/1319409,2018/11/13
-    #经销商编号，结算单编号，底盘号，车牌，工单日期，里程，日期+工单号，结算单日期
+    ''' 写入主数据，传入列参数的数组 '''
     newlistdate = [] 
     newlistdate = listdate
     newlistdate.append("0")
@@ -202,8 +215,7 @@ def SqlWrite_HEADR(listdate):
     sqlconn.close()
     pass
 def SqlWrite_LABOR(listdate):
-    #log_sql#]44144,411169,19839,5214901,,9.00,5,更新左前或右前座椅座套
-    #经销商编号，结算单号，工单号，工时代码，工时描述，数量，工时单位
+    ''' 写入工时数据，传入列参数的数组 '''
     newlistdate = []
     newlistdate = listdate
     sqlconn = sql.connect('datebase.db')
@@ -216,8 +228,7 @@ def SqlWrite_LABOR(listdate):
     sqlconn.close()
     pass
 def SqlWrite_Parts(listdate):
-    #log_sql#]44144,411176,19909,,,B83.21.2.365.711,润滑油,6.5000,,,,,,,,,,,,,
-    #经销商编号，结算单编号，工单号，，，零件号，零件描述，数量
+    ''' 写入配件数据，传入列参数的数组 '''
     newlistdate = []
     newlistdate = listdate
     sqlconn = sql.connect('datebase.db')
@@ -230,6 +241,7 @@ def SqlWrite_Parts(listdate):
 
 for i in bmw_datafile:
     readfile(conf.mod_parameters[0] + "/" + str(i))
+    os.remove(conf.mod_parameters[0] + "/" + str(i))
     pass
 
 

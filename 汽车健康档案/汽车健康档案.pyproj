@@ -12,6 +12,7 @@
     <Name>汽车健康档案</Name>
     <RootNamespace>汽车健康档案</RootNamespace>
     <InterpreterId>Global|PythonCore|3.6</InterpreterId>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,9 +22,6 @@
     <DebugSymbols>true</DebugSymbols>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
-  <ItemGroup>
-    <InterpreterReference Include="Global|PythonCore|3.6" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="conf.py">
       <SubType>Code</SubType>
@@ -40,15 +38,15 @@
     <Compile Include="script\BMW.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="script\TOYOTA.py">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="script\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="datebase.db" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.6" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

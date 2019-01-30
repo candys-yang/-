@@ -6,7 +6,7 @@
     该文件定义了 汽车健康档案 大部分的功能。
     配置项遵循 python 语法标准。
 
-    日期：2018-12-12   作者：杨主任
+    日期：2019-1-30   作者：杨主任
     Email： 522703331@qq.com 
     GIT：https://github.com/candys-yang/
     blog：http://varmain.com
@@ -28,9 +28,9 @@ python_dir = os.getcwd()
 
 # ------------- 经销商信息 ---------------
 # 经销商名称
-dealer_name = "阳江美宝行汽车销售服务有限公司"
+dealer_name = "某某某宝汽车销售服务有限公司"
 # 经销商编码
-dealer_id = "44144"
+dealer_id = "00000"
 #汽车品牌，示例：BMW     LEXUS       Toyota      Honda
 dealer_brand = "BMW"
 
@@ -41,23 +41,14 @@ dealer_brand = "BMW"
 itadmin_debug = True
 # 启用日志
 itadmin_log = True                      # Default As True
-# 启用电子邮件方式报告日志，请确保你的邮箱参数正确并开启 smtp
-itadmin_log_email = False               # False or True
-itadmin_log_email_name = "123@126.com"
-itadmin_log_email_pwd = "password"
-itadmin_log_email_server = "smtp.126.com"
-itadmin_log_email_recipient = "it@126.com"
-# 启用本地日志
-itadmin_log_local = True
-itadmin_log_local_path = "D:/汽车健康档案/log"
-itadmin_log_local_debug = True          # 日志包含调式数据
+
+
 
 # 账号数据
-#itadmin_update_url = "https://b.xlbzone.com/restservices/lcipprodatarest/lcipprocarfixrecordadd/query"      #上传地址
-itadmin_update_url = "https://tsb.xlbzone.com/restservices/lcipprodatarest/lcipprogetaccesstoken/query"     #测试用的地址
-itadmin_update_token = "https://b.xlbzone.com/restservices/lcipprodatarest/lcipprogetaccesstoken/query"  #token验证地址
-itadmin_update_user = ""                #上传登陆用户名
-itadmin_update_pwd = ""                 #上传登陆密码
+itadmin_update_url = "https://abc.com/update"      #上传地址
+itadmin_update_token = "https://abc.com/token"  #token验证地址
+itadmin_update_user = "username"                #上传登陆用户名
+itadmin_update_pwd = "password"                 #上传登陆密码
 
 
 # ---------------- 模块系统 ----------------
@@ -68,7 +59,7 @@ mod_script = "5990"
 #   mod_parameters[0] = DMS的数据目录
 #   mod_parameters[1] = 表映射
 mod_parameters_sqltable = ["bmw_headr","bmw_labor","bmw_parts"]
-mod_parameters = ['D:/dms_upload',mod_parameters_sqltable]
+mod_parameters = ['D:/upload',mod_parameters_sqltable]
 
 
 
